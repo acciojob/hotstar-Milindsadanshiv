@@ -38,10 +38,34 @@ public class UserService {
         List<WebSeries> webSeriesList=productionHouse.getWebSeriesList();
 
         Integer count=0;
+
+        SubscriptionType subscriptionType =user.getSubscription().getSubscriptionType();
+        String sub=String.valueOf(subscriptionType);
+
         for (WebSeries webSeries:webSeriesList) {
-            if (webSeries.getAgeLimit() <= ageLimit) {
-                count++;
-            }
+
+              String web1=String.valueOf(webSeries.getSubscriptionType());
+
+             if (ageLimit>=webSeries.getAgeLimit() && web1.equals("PRO") && sub.equals("PRO"))
+             {
+                 count++;
+             }
+             else if(ageLimit>=webSeries.getAgeLimit() && web1.equals("PRO") && sub.equals("BASIC"))
+             {
+                 continue;
+             }
+             else if(ageLimit>=webSeries.getAgeLimit() && web1.equals("BASIC") && sub.equals("BASIC"))
+             {
+                 count++;
+             }
+             else if(ageLimit>= webSeries.getAgeLimit() && web1.equals("BASIC") && sub.equals("PRO"))
+             {
+                 count++;
+             }
+             else if(ageLimit >=webSeries.getAgeLimit() && sub.equals("ELITE"))
+             {
+                 count++;
+             }
         }
         return count;
     }

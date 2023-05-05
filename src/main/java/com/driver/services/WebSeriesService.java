@@ -55,6 +55,7 @@ public class WebSeriesService {
         }
 
         ratings=sum/count;
+
         productionHouse.setRatings(ratings);
         webSeries.setProductionHouse(productionHouse);
         productionHouse.setWebSeriesList(webSeriesList);
