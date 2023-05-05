@@ -25,44 +25,40 @@ public class WebSeriesService {
         //Incase the seriesName is already present in the Db throw Exception("Series is already present")
         //use function written in Repository Layer for the same
         //Dont forget to save the production and webseries Repo
-        WebSeries webSeries=new WebSeries();
+       WebSeries webSeries=webSeriesRepository.findBySeriesName(webSeriesEntryDto.getSeriesName());
 
-        webSeries=webSeriesRepository.findBySeriesName(webSeries.getSeriesName());
-        if(webSeries!=null)
-        {
-            throw new Exception("Series is already present");
-        }
-        webSeries.setSeriesName(webSeries.getSeriesName());
-        webSeries.setAgeLimit(webSeriesEntryDto.getAgeLimit());
-        webSeries.setRating(webSeriesEntryDto.getRating());
-        webSeries.setSubscriptionType(webSeriesEntryDto.getSubscriptionType());
+       if (webSeries!=null)
+       {
+           throw new Exception("Series is already present");
+       }
 
+       WebSeries webSeries1=new WebSeries();
 
-        //find production house
-        ProductionHouse productionHouse=productionHouseRepository.findById(webSeriesEntryDto.getProductionHouseId()).get();
+       webSeries1.setSeriesName(webSeriesEntryDto.getSeriesName());
+       webSeries1.setRating(webSeriesEntryDto.getRating());
+       webSeries1.setSubscriptionType(webSeriesEntryDto.getSubscriptionType());
+       webSeries1.setAgeLimit(webSeriesEntryDto.getAgeLimit());
 
-        List<WebSeries> webSeriesList=productionHouse.getWebSeriesList();
-        webSeriesList.add(webSeries);
+       ProductionHouse productionHouse=productionHouseRepository.findById(webSeriesEntryDto.getProductionHouseId()).get();
 
+       List<WebSeries> webSeriesList=productionHouse.getWebSeriesList();
+       webSeriesList.add(webSeries1);
 
-        double ratings=0;
-        double sum=0;
-        double count=0;
-        for (WebSeries webSeries1:webSeriesList)
-        {
-            sum+=webSeries1.getRating();
-            count++;
-        }
+       double sum=0;
+       for (WebSeries webSeries2:webSeriesList)
+       {
+           sum+=webSeries2.getRating();
+       }
+       double rate=sum/webSeriesList.size();
 
-        ratings=sum/count;
+       productionHouse.setRatings(rate);
 
-        productionHouse.setRatings(ratings);
-        webSeries.setProductionHouse(productionHouse);
-        productionHouse.setWebSeriesList(webSeriesList);
+       webSeries1.setProductionHouse(productionHouse);
 
-        productionHouseRepository.save(productionHouse);
-        webSeriesRepository.save(webSeries);
-        return null;
+       webSeriesRepository.save(webSeries1);
+       productionHouseRepository.save(productionHouse);
+
+       return webSeries1.getId();
     }
 
 }
